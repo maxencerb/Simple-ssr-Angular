@@ -11,6 +11,21 @@ Written by &copy; Maxence RABALLAND, 2021, [My website](https://maxenceraballand
 Based on [Angular documentation](https://angular.io/) and [Angular universal docs](https://angular.io/guide/universal).
 More information about hosting and pricing on [firebase](https://firebase.google.com/).
 
+## Table of contents
+
+- [Prerequisites](#prerequisites)
+- [Try this project on your environment](#try-this-project-on-your-environment)
+- [Create the project](#create-the-project)
+  - [Simple angular project](#simple-angular-project)
+  - [Add angular universal](#add-angular-universal)
+  - [Add a firebase server](#add-a-firebase-server)
+  - [Deploy your app](#deploy-your-app)
+- [Development Tips](#development-tips)
+  - [Faster development method](#faster-development-method)
+  - [Creating a component, service, etc](#creating-a-component-service-etc)
+  - [Create a 404 page](#create-a-404-page)
+  - [Custom express api endpoints](#custom-express-api-endpoints)
+
 ## Prerequisites
 
 You'll have to create a **firebase** account first.
