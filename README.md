@@ -1,7 +1,7 @@
 ---
 title: Angular Server Side Rendering (with hosting)
 author: Maxence Raballand
-date: February 2021
+date: February 26, 2021
 ---
 
 # Angular Server Side Rendering (with hosting)
@@ -19,6 +19,10 @@ Then install npm (find on **node.js** website) and **Angular** on your local mac
 ```bash
 npm i -g @angular/cli
 ```
+
+Then, **create your firebase project**. You have to enable **firebase hosting**, and **firebase functions**. When you create your buckets, make sure to choose the right region *(e.g. : eu-west3, us-west1, ...)*.
+
+To enable firebase functions, you'll have to switch to firebase **blaze plan**. It's the pay as you go plan. For more info on pricing, visit [firebase pricing page](https://firebase.google.com/pricing).
 
 ## Try this project on your environment
 
@@ -54,7 +58,11 @@ With the latest version of angular, there is now a built-in angular command that
 ng add @nguniversal/express-engine
 ```
 
-This will create the following folder structure :
+You'll be prompted with the following :
+
+![alt text](https://raw.githubusercontent.com/maxencerb/Simple-ssr-Angular/master/mdassets/nguniversal.png "nguniversal added to project command image")
+
+So, this will create the following folder structure :
 
 ```diff
 src/
@@ -91,3 +99,133 @@ ng add @angular/fire
 ```
 
 This command will detect that you are on angular universal project. Wen asked if true, say Yes.
+
+![alt text](https://raw.githubusercontent.com/maxencerb/Simple-ssr-Angular/master/mdassets/ngfire1.png "ngfire prompt for angular universal image")
+
+Then simply choose the firebase project you created for your app :
+
+![alt text](https://raw.githubusercontent.com/maxencerb/Simple-ssr-Angular/master/mdassets/ngfire2.png "ngfire prompt to choose firebase project image")
+
+Once done you'll be **all set**.
+
+### Deploy your app
+
+Last step is to deploy your app. Just run the command :
+
+```bash
+ng deploy
+```
+
+This will build your project for production and deploy to firebase functions.
+
+## Development Tips
+
+### Faster development method
+
+When using the server-side rendering local server, each time you modify your files, it will rebuild parts of the server. It can take a long time before it refreches in your browser.
+
+If you are modifying your angular app only, I recommend using the `ng serve` command. The hot reload is much faster.
+
+Then, if you want to develop server features, or debug your whole app, use `npm run dev:ssr`. It takes longer to refresh, so use it only if necessary.
+
+### Creating a component, service, etc
+
+As you can see, in your `src/app` folder, there is now 2 app module : `app.module.ts` for your app and `app.server.module.ts`. When creating a component or a service, angular will want to auto-import to an app module. So in the cli, you'll have to specify which one to choose. You might want to use `app.module.ts` in most case.
+
+To create a component enter :
+
+```bash
+ng g c new-component --module app
+
+or
+
+ng g c new-component --module app.server
+```
+
+The same applies for module and services.
+
+### Create a 404 page
+
+When you make a request to a non-existing route while using server-side rendering, the server is trying to create an html template with a non-existing angular route and create a useless workload for your server.
+
+Create a **NotFoundComponent** :
+
+```bash
+ng g c components/not-found --module app
+```
+
+Make sure your `router-outlet` markup is top-level on your `app.component.html`
+
+```html
+<!-- app.component.html -->
+<router-outlet></router-outlet>
+
+<!-- not-found.component.html -->
+<h1>404 - not found</h1>
+```
+
+Feel free to add your own content and styling.
+Now add this to your `app-routing.module.ts` :
+
+```ts
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+
+const routes: Routes = [
+  // your routes here
+  {path: '404', component:NotFoundComponent},
+  {path: '**', redirectTo:'/404'}
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes, {
+    initialNavigation: 'enabled'
+})],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+```
+
+It is important to add your **custom routes before** these because the request will search for the first matching pattern.
+
+### Custom express api endpoints
+
+You can make modifications to your server settings in the `server.ts` file. To add custom api endpoints, add them before the built-in endpoints. This will overwrite them.
+
+```ts
+// server.ts
+...
+export function app(): express.Express {
+  const server = express();
+  const distFolder = join(process.cwd(), 'dist/<your-project>/browser');
+  const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
+
+  server.engine('html', ngExpressEngine({
+    bootstrap: AppServerModule,
+  }));
+
+  server.set('view engine', 'html');
+  server.set('views', distFolder);
+
+  // Add custom endpoints here
+  server.get('/api/hello', (req, res) => { 
+    // response example
+    res.send(`hello from maxence, the current time is ${Date.now()}`);
+  });
+  // End custom endpoints
+
+  // built-in endpoints
+  server.get('*.*', express.static(distFolder, {
+    maxAge: '1y'
+  }));
+
+  // All regular routes use the Universal engine
+  server.get('*', (req, res) => {
+    res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });
+  });
+
+  return server;
+}
+...
+```
