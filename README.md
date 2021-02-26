@@ -11,21 +11,11 @@ Written by &copy; Maxence RABALLAND, 2021, [My website](https://maxenceraballand
 Based on [Angular documentation](https://angular.io/) and [Angular universal docs](https://angular.io/guide/universal).
 More information about hosting and pricing on [firebase](https://firebase.google.com/).
 
-<style>
-  .images {
-    display: flex;
-    justify-content: space-around;
-  }
-
-  .images img {
-    width: 5rem;
-  }
-</style>
-
-<div class="images">
-  <img src="https://nodejs.org/static/images/logo.svg"/>
-  <img src="https://angular.io/assets/images/logos/angular/angular.svg"/>
-  <img src="https://www.gstatic.com/devrel-devsite/prod/vbd904f2719533e871e3800dda1bebc56aa0bc95c3c9d01c4d7cebcf129bdf26c/firebase/images/touchicon-180.png"/>
+<div style="display: flex;
+    justify-content: space-around;">
+  <img style="width: 5rem;" src="https://nodejs.org/static/images/logo.svg"/>
+  <img style="width: 5rem;" src="https://angular.io/assets/images/logos/angular/angular.svg"/>
+  <img style="width: 5rem;" src="https://www.gstatic.com/devrel-devsite/prod/vbd904f2719533e871e3800dda1bebc56aa0bc95c3c9d01c4d7cebcf129bdf26c/firebase/images/touchicon-180.png"/>
 </div>
 
 ## Table of contents
