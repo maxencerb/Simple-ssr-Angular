@@ -1,27 +1,93 @@
-# SimpleSsrAngular
+---
+title: Angular Server Side Rendering (with hosting)
+author: Maxence Raballand
+date: February 2021
+---
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.2.
+# Angular Server Side Rendering (with hosting)
 
-## Development server
+Written by &copy; Maxence RABALLAND, 2021, [My website](https://maxenceraballand.com).
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Based on [Angular documentation](https://angular.io/) and [Angular universal docs](https://angular.io/guide/universal).
+More information about hosting and pricing on [firebase](https://firebase.google.com/).
 
-## Code scaffolding
+## Prerequisites
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+You'll have to create a **firebase** account first.
+Then install npm (find on **node.js** website) and **Angular** on your local machine :
 
-## Build
+```bash
+npm i -g @angular/cli
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Try this project on your environment
 
-## Running unit tests
+Run the following commands on your command line tool :
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```bash
+git clone https://github.com/maxencerb/Simple-ssr-Angular.git
+cd Simple-ssr-Angular
+npm i
+```
 
-## Running end-to-end tests
+You can open your code editor `code .` and run the angular app **locally** with `ng serve --open` or run the **dev server** with `npm run dev:ssr`
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+## Create the project
 
-## Further help
+### Simple angular project
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+To start just use the **angular cli tools** to create a simple project. I'm am using latest versions of angular and angular universal to date (Feb. 2021).
+
+```bash
+ng new my-app
+cd my-app
+code .
+```
+
+This will create a simple angular project and open your favorite code editor. During development, you'll be able to use the `ng serve --open` command to serve your app locally and test with hot reload.
+
+### Add angular universal
+
+With the latest version of angular, there is now a built-in angular command that adds the packages and remodel your folder structure.
+
+```bash
+ng add @nguniversal/express-engine
+```
+
+This will create the following folder structure :
+
+```diff
+src/
+  ...
++ main.server.ts
+  ...
+  app/
+    ...
++   app.server.module.ts
+...
++server.ts
+```
+
+Now you can **run your server locally** with `npm run dev:ssr`.
+
+### Add a firebase server
+
+First, **create your firebase account** and **create your project**.
+Then **install the firebase cli** with npm and log in to your firebase account :
+
+```bash
+npm i -g firebase-tools
+firebase login
+```
+
+This will prompt you with a browser to **sign in to your google account**.
+
+For **CI (continuous integration)**, refer to the firebase docs and login with `firebase login CI`.
+
+Now **add firebase to yout project** :
+
+```bash
+ng add @angular/fire
+```
+
+This command will detect that you are on angular universal project. Wen asked if true, say Yes.
